@@ -19,7 +19,8 @@ class Help(modules.MyCog):
                                 "verifaction_code": "onay_kodu",
                                 "role": "rol",
                                 "amount": "miktar",
-                                "reason": "sebep"
+                                "reason": "sebep",
+                                "pos": "konum"
                             }
         
         self.cog_names = {

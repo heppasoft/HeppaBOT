@@ -115,10 +115,10 @@ class Compiler(modules.MyCog):
             lang = self.godbolt.get_language(lang.replace("c#","cs"))
         
         if code is None:
-            embed = modules.create_embed(":x: İşlem Başarısız", "Lütfen bir kod dosyası ekleyin yada kod bloğunu girin. ")
+            embed = modules.create_embed(":x: İşlem Başarısız", "Lütfen bir kod dosyası ekleyin yada kod bloğunu girin.")
             await ctx.send(embed=embed)
         elif not isinstance(lang, modules.GodboltLanguage):
-            embed = modules.create_embed(":x: İşlem Başarısız", "Lütfen desteklenen bir programlama dili girin. ")
+            embed = modules.create_embed(":x: İşlem Başarısız", "Lütfen desteklenen bir programlama dili girin.")
             await ctx.send(embed=embed)
         else:
             embed = modules.create_embed(":warning: Bilgilendirme", "Kodunuz derleniyor...")

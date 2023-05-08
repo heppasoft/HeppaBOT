@@ -34,8 +34,8 @@ class GodboltCompiler(modules.Namespace):
         return f"https://godbolt.org/api/compiler/{self.id}/compile"
 
 class Godbolt:
-    last_cache_langs_update: datetime.datetime
-    last_cache_compilers_update: datetime.datetime
+    last_cache_langs_update: datetime.date
+    last_cache_compilers_update: datetime.date
     
     def __init__(self, db: modules.SQLDatabase) -> None:
         self.baseUrl = "https://godbolt.org/api/"
@@ -53,25 +53,25 @@ class Godbolt:
         
         res = self.db.execute("SELECT config FROM bot_configs WHERE name=?", ("godbolt",))
         config = res.fetchone()
-        now = datetime.datetime.now()
+        today = datetime.date.today()
         
         if config is None:
-            self.db.execute("INSERT INTO bot_configs VALUES(?,?)", ("godbolt", json.dumps({"last_cache_langs_update": now.isoformat(), "last_cache_compilers_update": now.isoformat()})))
+            self.db.execute("INSERT INTO bot_configs VALUES(?,?)", ("godbolt", json.dumps({"last_cache_langs_update": today.isoformat(), "last_cache_compilers_update": today.isoformat()})))
             self.db.commit()
-            self.last_cache_langs_update = now - datetime.timedelta(days=1)
-            self.last_cache_compilers_update = self.last_cache_langs_update
+            self.last_cache_langs_update = today - datetime.timedelta(days=1)
+            self.last_cache_compilers_update = today - datetime.timedelta(days=1)
             self.compilers
             self.langs
         else:
             config = json.loads(config[0])
-            self.last_cache_compilers_update = datetime.datetime.fromisoformat(config["last_cache_compilers_update"])
-            self.last_cache_langs_update = datetime.datetime.fromisoformat(config["last_cache_langs_update"])
+            self.last_cache_compilers_update = datetime.date.fromisoformat(config["last_cache_compilers_update"])
+            self.last_cache_langs_update = datetime.date.fromisoformat(config["last_cache_langs_update"])
     
     
     @property
     def langs(self) -> list[GodboltLanguage]:
         
-        last_uptade_dif = (datetime.datetime.now() - self.last_cache_langs_update).days
+        last_uptade_dif = (datetime.date.today() - self.last_cache_langs_update).days
         
         langs: list[GodboltLanguage] = []
         
@@ -88,7 +88,7 @@ class Godbolt:
                 self.db.commit()
                 langs.append(GodboltLanguage(lang))
                 
-            self.last_cache_langs_update = datetime.datetime.now()
+            self.last_cache_langs_update = datetime.date.today()
         else:
             res = self.db.execute("SELECT * FROM godbolt_langs")
             for l in res.fetchall():
@@ -99,7 +99,7 @@ class Godbolt:
     
     @property
     def compilers(self) -> list[GodboltCompiler]:
-        last_uptade_dif = (datetime.datetime.now() - self.last_cache_compilers_update).days
+        last_uptade_dif = (datetime.date.today() - self.last_cache_compilers_update).days
         
         compilers: list[GodboltCompiler] = []
         
@@ -114,7 +114,7 @@ class Godbolt:
                 self.db.commit()
                 compilers.append(GodboltCompiler(compiler))
         
-            self.last_cache_compilers_update = datetime.datetime.now()
+            self.last_cache_compilers_update = datetime.date.today()
         else:
             res = self.db.execute("SELECT * FROM godbolt_compilers")
             for c in res.fetchall():
