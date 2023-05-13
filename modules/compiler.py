@@ -89,6 +89,8 @@ class Godbolt:
                 langs.append(GodboltLanguage(lang))
                 
             self.last_cache_langs_update = datetime.date.today()
+            self.db.execute("UPDATE bot_configs SET config=? WHERE name = ?", (json.dumps({"last_cache_langs_update": self.last_cache_langs_update.isoformat(), "last_cache_compilers_update": self.last_cache_compilers_update.isoformat()}), "godbolt"))
+            self.db.commit()
         else:
             res = self.db.execute("SELECT * FROM godbolt_langs")
             for l in res.fetchall():
@@ -115,6 +117,8 @@ class Godbolt:
                 compilers.append(GodboltCompiler(compiler))
         
             self.last_cache_compilers_update = datetime.date.today()
+            self.db.execute("UPDATE bot_configs SET config=? WHERE name = ?", (json.dumps({"last_cache_langs_update": self.last_cache_langs_update.isoformat(), "last_cache_compilers_update": self.last_cache_compilers_update.isoformat()}), "godbolt"))
+            self.db.commit()
         else:
             res = self.db.execute("SELECT * FROM godbolt_compilers")
             for c in res.fetchall():
@@ -124,17 +128,17 @@ class Godbolt:
         return compilers
     
     def get_language(self, id: str) -> t.Union[GodboltLanguage, None]:
-        return modules.find(lambda l: l.id == id, self.langs) or self.get_language_by_alias(id)
+        return modules.find(lambda l: l.id == id, self.langs, only_first=True) or self.get_language_by_alias(id)
     
     def get_language_by_alias(self, alias: str) -> t.Union[GodboltLanguage, None]:
-        return modules.find(lambda l: l.monaco == alias or l.name.lower() == alias or alias in l.alias, self.langs)
+        return modules.find(lambda l: l.monaco == alias or l.name.lower() == alias or alias in l.alias, self.langs, only_first=True)
     
     def get_language_by_extension(self, ext: str) -> t.Union[GodboltLanguage, None]:
         if not ext.startswith("."): ext = f".{ext}"
         return modules.find(lambda l: ext in l.extensions, self.langs, only_first=True)
     
     def get_compiler(self, id: str) -> t.Union[GodboltCompiler, None]:
-        return modules.find(lambda c: c.id == id, self.compilers)
+        return modules.find(lambda c: c.id == id, self.compilers, only_first=True)
     
     def is_valid_lang(self, id: str) -> bool:
         return modules.find(lambda l: l.id == id, self.langs) != None

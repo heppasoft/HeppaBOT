@@ -138,6 +138,30 @@ class Mod(modules.MyCog):
         await channel.delete_messages(messages)
         await asyncio.sleep(1)
         await ctx.send(f"{channel.mention} kanalından toplam {len(messages)} mesaj temizlendi.", delete_after=5)
+    
+    
+    @commands.command(name="clear_all_server", aliases=["sunucu_temizle", "c_a_s"], help="Sunucudaki tüm metin kanallarını temizler.", channels=[constants.SERVER_BOT_MOD_CHANNEL_ID])
+    async def clear_all_server(self, ctx: commands.Context, limit=100):
+        """ Clears all text channel in server. """
+        
+        channels = ctx.guild.text_channels
+        
+        await ctx.message.delete()
+
+        announcemnt_channel = ctx.guild.get_channel(constants.SERVER_BOT_LOG_CHANNEL_ID)
+        text = ""
+        
+        for channel in channels:
+            messages = await channel.history(limit=limit).flatten()
+
+            await channel.delete_messages(messages)
+            text += f"\n{channel.mention}: {len(messages)}"
+        
+        await asyncio.sleep(1)
+        
+        embed = modules.create_embed(":white_check_mark: İşlem Başarılı", "Sunucudaki tüm kanallar temizlendi.")
+        embed.add_field("Temizlenen kanallar:", text)
+        await announcemnt_channel.send(embed=embed)
 
 
     @commands.command(name="ban", aliases=["yasakla"], help="Bir kullanıcıyı sunucudan yasaklama.", roles=[constants.MODERATOR_ROLE], channels="all")
@@ -270,6 +294,13 @@ class Mod(modules.MyCog):
 
         self.client.db.execute("DELETE FROM applications WHERE id=?", (user_id,))
         self.client.db.commit()
+    
+    
+    @commands.command(name="clear_chatbot_history", aliases=["c_c_h"], help="Sohbet botunun mesaj geçmişini sıfırlar.", roles=[constants.MODERATOR_ROLE], channels=[constants.SERVER_BOT_MOD_CHANNEL_ID])
+    async def clear_chatbot_history(self, ctx: commands.Context):
+        self.client.chatbot.reset_message_history()
+        embed = modules.create_embed(":white_check_mark: İşlem Başarılı", "Sohbet botunun mesaj geçmişi sıfırlandı.")
+        await ctx.send(embed=embed)
 
 def setup(client: modules.MyBot):
     client.add_cog(Mod(client))

@@ -1,11 +1,13 @@
-class ShellCommandError(Exception): pass
+class BaseError(Exception): pass
 
-class SendEmailError(Exception): pass
-class SendEmailAuthError(Exception): pass
+class ShellCommandError(BaseError): pass
 
-class InvalidCommandChannel(Exception): pass
+class SendEmailError(BaseError): pass
+class SendEmailAuthError(BaseError): pass
 
-class UnknownUser(Exception): pass
+class CompilationError(BaseError): pass
+class GodboltError(BaseError): pass
 
-class CompilationError(Exception): pass
-class GodboltError(Exception): pass
+class InvalidCommandChannel(BaseError): pass
+
+class UnknownUser(BaseError): pass

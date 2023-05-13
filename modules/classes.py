@@ -165,13 +165,16 @@ class Member(Namespace):
 
 
 class MyBot(commands.Bot):
-    level_meter: "LevelMeter"
-    is_in_development: bool
     db: "SQLDatabase"
+    is_in_development: bool
+    level_meter: "LevelMeter"
+    chatbot: "modules.ChatBot"
+    
     def __init__(self,**options):
         self.level_meter = options.pop("level_meter")
         self.is_in_development = options.pop("is_in_development")
         self.db = options.pop("database")
+        self.chatbot = options.pop("chatbot")
         super().__init__(**options)
     
     async def process_commands(self: commands.Bot, message: discord.Message):
@@ -198,11 +201,13 @@ class MyBot(commands.Bot):
 
             if message.channel.id not in channels and len(channels) > 0:
                 await message.delete()
-                raise modules.errors.InvalidCommandChannel()
+                self.dispatch("command_error", ctx, modules.errors.InvalidCommandChannel())
+                return
 
             roles = ctx.command.__original_kwargs__.get("roles", [])
             if not modules.has_ayn_role(message.author, roles) and len(roles) > 0 and not modules.has_ayn_role(message.author, constants.ADMIN_ROLE):
-                raise commands.MissingAnyRole(roles)
+                self.dispatch("command_error", ctx, commands.MissingAnyRole(roles))
+                return
 
         await message.channel.trigger_typing()
         await asyncio.sleep(1)

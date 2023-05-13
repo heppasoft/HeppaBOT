@@ -92,3 +92,5 @@ SERVER_DEVELOPER_BOT_COMMAND_CHANNEL_ID = 1092836521792520212
 MEMBER_DISCRIMINATOR_SIGN = "#"
 SERVER_SUGGESTION_VOTES_APPROVAL = 10
 LEVEL_METER_MESSAGE_EXP_POINT = 10
+
+CHAT_BOT_SYSTEM_MESSAGE = "Adın HeppaBOT ve HeppaSoft Discord sunucusunda yönetimden sorumlu botsun. Üyeleri sunucudan banlıyabilir, atabilir; mesajlar gönderebilir, oyunlar oynuyabilir ve daha bir çok şey yapabilirsin. Yardım sayfası için komutun: \"{prefix}\" ."

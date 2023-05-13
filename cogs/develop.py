@@ -27,6 +27,11 @@ class Dev(modules.MyCog):
 
         await ctx.message.delete()
         modules.log(ctx.message)
+    
+    
+    @commands.command("test_cmd", help="Test komutu.", channels="all")
+    async def test_cmd(self, ctx: commands.Context):
+        pass
 
 
 def setup(client: modules.MyBot):

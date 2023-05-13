@@ -50,6 +50,14 @@ class TicTacToe(modules.MyCog):
         self.player2 = p2 if p2 != None else ctx.message.author
         self.start_datetime = datetime.datetime.now()
         
+        self.board:list[int] = [
+            "0","0","0",
+            "0","0","0",
+            "0","0","0"
+        ]
+        
+        self.messages = []
+        
         board:str = ""
         for c in range(0,len(self.board),3):
             board+=" ".join(self.board[c:c+3])
@@ -111,9 +119,11 @@ class TicTacToe(modules.MyCog):
         
         if self.game_over:
             await ctx.send(f"{self.turn.mention} kazandı!!!")
+            return
         elif self.lap >= 9:
             self.game_over = True
             await ctx.send("Berabere!!!!")
+            return
         
         self.turn = self.player1 if self.turn != self.player1 else self.player2
         msg_o = self.messages[3]
@@ -127,6 +137,7 @@ class TicTacToe(modules.MyCog):
             embed = modules.create_embed(":x: İşlem Başarısız", "Devam eden bir oyun bulunmuyor.")
             await ctx.send(embed=embed)
         else:
+            self.game_over = True
             embed = modules.create_embed(":white_check_mark: İşlem Başarılı", "Devam eden TicTacToe oyununu sonlandırıldı.")
             await ctx.send(embed=embed)
     
