@@ -1,3 +1,5 @@
+import os
+
 BOT_NAME = "HeppaBOT"
 SERVER_NAME = "HeppaSoft"
 COMMAND_PREFIX = ".hb "
@@ -20,8 +22,8 @@ RANDOM_CODE_CHAR_SET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123
 RANDOM_CODE_LEN = 6
 
 SENDEMAIL_FROM = "HeppaSoft"
-SENDEMAIL_EMAIL_ADDRESS = "heppasoft@gmail.com"
-SENDEMAIL_EMAIL_PASSWORD = "lnjnmbcavqrldpmk"
+SENDEMAIL_EMAIL_ADDRESS = os.getenv("SENDEMAIL_EMAIL_ADDRESS")
+SENDEMAIL_EMAIL_PASSWORD = os.getenv("SENDEMAIL_EMAIL_PASSWORD")
 SENDEMAIL_CONTENT = """
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
